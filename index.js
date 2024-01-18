@@ -2,8 +2,66 @@ const http = require('http');
 const querystring = require('querystring');
 const axios = require('axios');
 const moment = require('moment-timezone');
+const jsforce = require('jsforce');
 
-function getAccessToken(apiKey, username, password) {
+// Function to get Salesforce access token
+function getSalesforceAccessToken(clientId, clientSecret, username, password) {
+    const conn = new jsforce.Connection();
+
+    return conn.login(username, password + clientSecret, function(err, userInfo) {
+        if (err) {
+            throw new Error(`Salesforce login error: ${err.message}`);
+        }
+        return conn.accessToken;
+    });
+}
+
+// Modify getAccessToken function for Salesforce
+function getAccessToken(clientId, clientSecret, username, password) {
+    const url = 'https://login.salesforce.com/services/oauth2/token';
+    const headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    };
+    const data = querystring.stringify({
+        'grant_type': 'password',
+        'client_id': clientId,
+        'client_secret': clientSecret,
+        'username': username,
+        'password': password
+    });
+
+    return axios.post(url, data, { headers })
+        .then(response => {
+            if (response.status === 200) {
+                return response.data.access_token;
+            } else {
+                throw new Error(`Error getting Salesforce access token: ${response.status}, ${response.data}`);
+            }
+        });
+}
+
+// Function to create records in Salesforce
+function createSalesforceRecord(salesforceAccessToken, recordInfo) {
+    const conn = new jsforce.Connection({ accessToken: salesforceAccessToken });
+
+    const record = {
+        Phone__c: recordInfo.callee,
+        talkTime__c: recordInfo.talkTime,
+        callerName__c: recordInfo.callerName,
+        // ... (other fields as needed)
+    };
+
+    conn.sobject("Invite_Team_Activity__c").create(record, function(err, ret) {
+        if (err || !ret.success) {
+            console.error(`Error creating Salesforce record: ${err}`);
+        } else {
+            console.log(`Salesforce record created successfully: ${ret.id}`);
+        }
+    });
+}
+
+// Function to get 8x8 access token
+function get8x8AccessToken(apiKey, username, password) {
     const url = 'https://api.8x8.com/analytics/work/v1/oauth/token';
     const headers = {
         '8x8-apikey': apiKey,
@@ -19,12 +77,13 @@ function getAccessToken(apiKey, username, password) {
             if (response.status === 200) {
                 return response.data.access_token;
             } else {
-                throw new Error(`Error getting access token: ${response.status}, ${response.data}`);
+                throw new Error(`Error getting 8x8 access token: ${response.status}, ${response.data}`);
             }
         });
 }
 
-function getCallRecords(apiKey, accessToken, pbxId, startTime, endTime, timeZone, version) {
+// Function to get 8x8 call records
+function get8x8CallRecords(apiKey, accessToken, pbxId, startTime, endTime, timeZone, version) {
     const url = `https://api.8x8.com/analytics/work/${version}/call-records`;
     const headers = {
         'Authorization': `Bearer ${accessToken}`,
@@ -43,11 +102,12 @@ function getCallRecords(apiKey, accessToken, pbxId, startTime, endTime, timeZone
             if (response.status === 200) {
                 return response.data.data;
             } else {
-                throw new Error(`Error getting call records: ${response.status}, ${response.data}`);
+                throw new Error(`Error getting 8x8 call records: ${response.status}, ${response.data}`);
             }
         });
 }
 
+// Function to extract information from 8x8 call records
 function extractInformation(callRecords) {
     return callRecords.map(record => ({
         callee: record.callee || '',
@@ -56,7 +116,15 @@ function extractInformation(callRecords) {
     }));
 }
 
+// Main function to orchestrate the process
 function main() {
+    // Salesforce credentials
+    const salesforceClientId = '3MVG9p1Q1BCe9GmBa.vd3k6U6tisbR1DMPjMzaiBN7xn.uqsguNxOYdop1n5P_GB1yHs3gzBQwezqI6q37bh9';
+    const salesforceClientSecret = '1AAD66E5E5BF9A0F6FCAA681ED6720A797AC038BC6483379D55C192C1DC93190';
+    const salesforceUsername = 'admin@unblindedmastery.com';
+    const salesforcePassword = 'Unblinded2023$';
+
+    // 8x8 credentials
     const apiKey = 'eght_NWRmYzc0MzQtNDFlMy00MDI2LTlkMjItZmM1NTg0NDgzYzc3';
     const username = 'Unblinded.Mastery';
     const password = 'UBMastery711@x!!';
@@ -66,11 +134,24 @@ function main() {
     const timeZone = 'America/New_York';
     const version = 'v2';
 
-    getAccessToken(apiKey, username, password)
-        .then(accessToken => getCallRecords(apiKey, accessToken, pbxId, startTime, endTime, timeZone, version))
-        .then(callRecords => {
-            const extractedInfo = extractInformation(callRecords);
-            extractedInfo.forEach(recordInfo => console.log(recordInfo));
+    // Get Salesforce access token
+    getAccessToken(salesforceClientId, salesforceClientSecret, salesforceUsername, salesforcePassword)
+        .then(salesforceAccessToken => {
+            // Get 8x8 access token
+            return get8x8AccessToken(apiKey, username, password)
+                .then(accessToken => {
+                    // Get 8x8 call records
+                    return get8x8CallRecords(apiKey, accessToken, pbxId, startTime, endTime, timeZone, version);
+                })
+                .then(callRecords => {
+                    // Extract information from 8x8 call records
+                    const extractedInfo = extractInformation(callRecords);
+
+                    // Use Salesforce access token to create records
+                    extractedInfo.forEach(recordInfo => {
+                        createSalesforceRecord(salesforceAccessToken, recordInfo);
+                    });
+                });
         })
         .catch(error => console.error(error));
 }
