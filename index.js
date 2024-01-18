@@ -20,7 +20,6 @@ function getAccessToken(clientId, clientSecret, username, password) {
         .then(response => {
             if (response.status === 200) {
                 const accessToken = response.data.access_token;
-                console.log(`Salesforce Access Token: ${accessToken}`);
                 return accessToken;
             } else {
                 throw new Error(`Error getting Salesforce access token: ${response.status}, ${response.data}`);
@@ -32,6 +31,7 @@ function getAccessToken(clientId, clientSecret, username, password) {
 // Function to create records in Salesforce
 function createSalesforceRecord(salesforceAccessToken, recordInfo) {
     const url = 'https://unblindedmastery.my.salesforce.com/services/data/v58.0.0/sobjects/Invite_Team_Activity__c'; // Replace with your Salesforce instance URL
+    console.log(`Salesforce Access Token: ${salesforceAccessToken}`);
 
     const record = {
         Phone__c: recordInfo.callee,
