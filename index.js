@@ -42,22 +42,26 @@ function getAccessToken(clientId, clientSecret, username, password) {
 
 // Function to create records in Salesforce
 function createSalesforceRecord(salesforceAccessToken, recordInfo) {
-    const conn = new jsforce.Connection({ accessToken: salesforceAccessToken });
+    const url = 'https://unblindedmastery.my.salesforce.com/services/data/v58.0.0/sobjects/Invite_Team_Activity__c'; // Replace with your Salesforce instance URL
 
     const record = {
         Phone__c: recordInfo.callee,
         talkTime__c: recordInfo.talkTime,
-        callerName__c: recordInfo.callerName,
-        // ... (other fields as needed)
+        callerName__c: recordInfo.callerName
     };
 
-    conn.sobject("Invite_Team_Activity__c").create(record, function(err, ret) {
-        if (err || !ret.success) {
-            console.error(`Error creating Salesforce record: ${err}`);
-        } else {
-            console.log(`Salesforce record created successfully: ${ret.id}`);
-        }
-    });
+    const headers = {
+        'Authorization': `Bearer ${salesforceAccessToken}`,
+        'Content-Type': 'application/json'
+    };
+
+    axios.post(url, record, { headers })
+        .then(response => {
+            console.log(`Salesforce record created successfully: ${response.data.id}`);
+        })
+        .catch(error => {
+            console.error(`Error creating Salesforce record: ${error.message}`);
+        });
 }
 
 // Function to get 8x8 access token
