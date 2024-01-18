@@ -137,10 +137,8 @@ function main() {
                     return get8x8CallRecords(apiKey, accessToken, pbxId, startTime, endTime, timeZone, version);
                 })
                 .then(callRecords => {
-                    console.log('8x8 Call Records:', callRecords);
-
-                    // Extract information from 8x8 call records
                     const extractedInfo = extractInformation(callRecords);
+                    console.log('8x8 Call Records:', extractedInfo);
 
                     // Use Salesforce access token to create records
                     extractedInfo.forEach(recordInfo => {
