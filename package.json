@@ -8,7 +8,7 @@
   "dependencies": {
     "axios": "^0.24.0",
     "moment-timezone": "",
-    "jsforce": "" // Add this line for jsforce
+    "jsforce": ""
   },
   "scripts": {
     "start": "node index.js"
