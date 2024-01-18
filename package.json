@@ -7,7 +7,8 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.24.0",
-    "moment-timezone": ""
+    "moment-timezone": "",
+    "jsforce": "" // Add this line for jsforce
   },
   "scripts": {
     "start": "node index.js"
