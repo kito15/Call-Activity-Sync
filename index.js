@@ -30,8 +30,9 @@ function getAccessToken(clientId, clientSecret, username, password) {
 
 // Function to create records in Salesforce
 function createSalesforceRecord(salesforceAccessToken, recordInfo) {
-    const url = 'https://unblindedmastery.my.salesforce.com/services/data/v58.0.0/sobjects/Invite_Team_Activity__c'; // Replace with your Salesforce instance URL
+    const url = 'https://unblindedmastery.my.salesforce.com/services/data/v58.0/sobjects/Invite_Team_Activity__c'; // Replace with your Salesforce instance URL
     console.log(`Salesforce Access Token: ${salesforceAccessToken}`);
+    console.log('8x8 Call Records:', recordInfo);
 
     const record = {
         Phone__c: recordInfo.callee,
@@ -138,8 +139,6 @@ function main() {
                 })
                 .then(callRecords => {
                     const extractedInfo = extractInformation(callRecords);
-                    console.log('8x8 Call Records:', extractedInfo);
-
                     // Use Salesforce access token to create records
                     extractedInfo.forEach(recordInfo => {
                         createSalesforceRecord(salesforceAccessToken, recordInfo);
