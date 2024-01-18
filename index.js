@@ -1,6 +1,7 @@
 const http = require('http');
 const querystring = require('querystring');
 const axios = require('axios');
+const moment = require('moment-timezone');
 
 function getAccessToken(apiKey, username, password) {
     const url = 'https://api.8x8.com/analytics/work/v1/oauth/token';
@@ -60,8 +61,8 @@ function main() {
     const username = 'Unblinded.Mastery';
     const password = 'UBMastery711@x!!';
     const pbxId = 'unblindedmastery882';
-    const startTime = '2024-01-16 09:00:00';
-    const endTime = '2024-01-16 10:00:00';
+    const startTime = moment().tz('America/New_York').subtract(1, 'hour').format('YYYY-MM-DD HH:mm:ss');
+    const endTime = moment().tz('America/New_York').format('YYYY-MM-DD HH:mm:ss');
     const timeZone = 'America/New_York';
     const version = 'v2';
 
