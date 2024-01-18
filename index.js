@@ -3,7 +3,6 @@ const querystring = require('querystring');
 const axios = require('axios');
 const moment = require('moment-timezone');
 
-// Modify getAccessToken function for Salesforce
 function getAccessToken(clientId, clientSecret, username, password) {
     const url = 'https://login.salesforce.com/services/oauth2/token';
     const headers = {
@@ -20,12 +19,15 @@ function getAccessToken(clientId, clientSecret, username, password) {
     return axios.post(url, data, { headers })
         .then(response => {
             if (response.status === 200) {
-                return response.data.access_token;
+                const accessToken = response.data.access_token;
+                console.log(`Salesforce Access Token: ${accessToken}`);
+                return accessToken;
             } else {
                 throw new Error(`Error getting Salesforce access token: ${response.status}, ${response.data}`);
             }
         });
 }
+
 
 // Function to create records in Salesforce
 function createSalesforceRecord(salesforceAccessToken, recordInfo) {
@@ -135,6 +137,8 @@ function main() {
                     return get8x8CallRecords(apiKey, accessToken, pbxId, startTime, endTime, timeZone, version);
                 })
                 .then(callRecords => {
+                    console.log('8x8 Call Records:', callRecords);
+
                     // Extract information from 8x8 call records
                     const extractedInfo = extractInformation(callRecords);
 
