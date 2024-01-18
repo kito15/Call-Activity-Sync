@@ -2,19 +2,6 @@ const http = require('http');
 const querystring = require('querystring');
 const axios = require('axios');
 const moment = require('moment-timezone');
-const jsforce = require('jsforce');
-
-// Function to get Salesforce access token
-function getSalesforceAccessToken(clientId, clientSecret, username, password) {
-    const conn = new jsforce.Connection();
-
-    return conn.login(username, password + clientSecret, function(err, userInfo) {
-        if (err) {
-            throw new Error(`Salesforce login error: ${err.message}`);
-        }
-        return conn.accessToken;
-    });
-}
 
 // Modify getAccessToken function for Salesforce
 function getAccessToken(clientId, clientSecret, username, password) {
