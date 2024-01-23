@@ -3,6 +3,8 @@ const querystring = require('querystring');
 const axios = require('axios');
 const moment = require('moment-timezone');
 
+const PORT = process.env.PORT || 3000;
+
 function getAccessToken(clientId, clientSecret, username, password) {
     const url = 'https://login.salesforce.com/services/oauth2/token';
     const headers = {
@@ -153,14 +155,10 @@ function main() {
 // Set up a simple HTTP server
 const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Hello, this is your Node.js server!');
+    
 });
 
-const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/`);
 });
 
-if (require.main === module) {
-    main();
-}
