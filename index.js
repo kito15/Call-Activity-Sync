@@ -140,8 +140,10 @@ function main() {
                 .then(callRecords => {
                     const extractedInfo = extractInformation(callRecords);
                     // Use Salesforce access token to create records
-                    extractedInfo.forEach(recordInfo => {
-                        createSalesforceRecord(salesforceAccessToken, recordInfo);
+                    extractedInfo.forEach((recordInfo, index) => {
+                        setTimeout(() => {
+                            createSalesforceRecord(salesforceAccessToken, recordInfo);
+                        }, index * 2000); // 2000 milliseconds (2 seconds) delay
                     });
                 });
         })
