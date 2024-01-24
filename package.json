@@ -9,7 +9,8 @@
     "axios": "^0.24.0",
     "moment-timezone": "",
     "jsforce": "",
-    "express": ""
+    "express": "",
+    "node-cron": ""
   },
   "scripts": {
     "start": "node index.js"
