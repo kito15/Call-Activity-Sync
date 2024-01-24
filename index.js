@@ -2,7 +2,6 @@ const http = require('http');
 const querystring = require('querystring');
 const axios = require('axios');
 const moment = require('moment-timezone');
-
 const PORT = process.env.PORT || 3000;
 
 function getAccessToken(clientId, clientSecret, username, password) {
