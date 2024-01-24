@@ -28,6 +28,11 @@ function getAccessToken(clientId, clientSecret, username, password) {
         });
 }
 
+app.get('/trigger-job', (req, res) => {
+    console.log('Triggering the job...');
+    main();
+    res.send('Job triggered successfully!');
+});
 
 // Function to create records in Salesforce
 function createSalesforceRecord(salesforceAccessToken, recordInfo) {
