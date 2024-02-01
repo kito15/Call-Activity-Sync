@@ -6,7 +6,7 @@
   "author": "alphasec",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.24.0",
+    "axios": "^1.6.7",
     "moment-timezone": "",
     "jsforce": "",
     "express": "",
