@@ -1,6 +1,1 @@
-# nodejs
-A minimal Node.js web application.
-
-For a step-by-step guide to deploying on [Railway](https://railway.app/?referralCode=alphasec), see [this](https://alphasec.io/how-to-deploy-a-nodejs-app-on-railway/) post, or click the button below.
-
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/Abo1zu?referralCode=alphasec)
+Salesforce-8x8 Integration is a project that automates the synchronization of call records between Salesforce and 8x8 systems. It uses Node.js with Express for the backend and Axios for making HTTP requests. The integration retrieves call records from the 8x8 system, processes them, and creates corresponding records in Salesforce. The project demonstrates how to securely authenticate with both systems and handle data transfer between them, providing a seamless solution for managing call data across platforms.
